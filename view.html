@@ -6,7 +6,6 @@
 
 <title>Number Search</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="icon-192.png">
@@ -48,14 +47,27 @@ button{
   margin-top:20px;
 }
 
+.matchBox{
+  border:2px solid #4285f4;
+  border-radius:8px;
+  margin-top:18px;
+  overflow:hidden;
+}
+
+.matchTitle{
+  background:#222;
+  color:white;
+  padding:8px;
+  font-size:18px;
+  font-weight:bold;
+}
+
 .title{
   background:#4285f4;
   color:white;
   padding:8px;
   font-size:18px;
   font-weight:bold;
-  border-radius:6px 6px 0 0;
-  margin-top:15px;
 }
 
 .row{
@@ -139,7 +151,6 @@ button{
 <script>
 let data = [];
 
-/* JSON FILE LOAD */
 document.getElementById("fileInput").addEventListener("change", function(){
 
   const file = this.files[0];
@@ -174,13 +185,10 @@ document.getElementById("fileInput").addEventListener("change", function(){
           Wrong JSON File
         </div>
       `;
-
     }
-
   };
 
   reader.readAsText(file);
-
 });
 
 function findData(){
@@ -189,67 +197,58 @@ function findData(){
   const output = document.getElementById("output");
 
   if(data.length === 0){
-
-    output.innerHTML = `
-      <div class="notfound">
-        पहले JSON file choose करें
-      </div>
-    `;
-
+    output.innerHTML = `<div class="notfound">पहले JSON file choose करें</div>`;
     return;
   }
 
   if(!/^[0-9]{2,4}$/.test(input)){
-
-    output.innerHTML = `
-      <div class="notfound">
-        कृपया सिर्फ 2 से 4 digit डालो
-      </div>
-    `;
-
+    output.innerHTML = `<div class="notfound">कृपया सिर्फ 2 से 4 digit डालो</div>`;
     return;
   }
 
   const searchNums = input.split("").map(n => Number(n));
   const len = searchNums.length;
 
+  let allResults = "";
+  let count = 0;
+
   for(let i = 0; i <= data.length - len; i++){
 
     let match = true;
 
     for(let j = 0; j < len; j++){
-
       if(Number(data[i + j].num) !== searchNums[j]){
         match = false;
         break;
       }
-
     }
 
     if(match){
 
+      count++;
+
       const aageWala = data[i - 1];
       const pichheWala = data[i + len];
 
-      output.innerHTML = `
-        <div class="title">आगे वाला</div>
-        ${showItemRow(aageWala)}
+      allResults += `
+        <div class="matchBox">
+          <div class="matchTitle">Result ${count}</div>
 
-        <div class="title">पीछे वाला</div>
-        ${showItemRow(pichheWala)}
+          <div class="title">आगे वाला</div>
+          ${showItemRow(aageWala)}
+
+          <div class="title">पीछे वाला</div>
+          ${showItemRow(pichheWala)}
+        </div>
       `;
-
-      return;
     }
-
   }
 
-  output.innerHTML = `
-    <div class="notfound">
-      Not Found
-    </div>
-  `;
-
+  if(count > 0){
+    output.innerHTML = allResults;
+  }else{
+    output.innerHTML = `<div class="notfound">Not Found</div>`;
+  }
 }
 
 function showItemRow(item){
@@ -270,7 +269,6 @@ function showItemRow(item){
 
   return `
     <div class="row">
-
       <div class="col num ${color === "double" ? "violet" : color}">
         ${item.num}
       </div>
@@ -282,7 +280,6 @@ function showItemRow(item){
       <div class="col">
         ${showColor(color)}
       </div>
-
     </div>
   `;
 }
@@ -290,24 +287,19 @@ function showItemRow(item){
 function showColor(color){
 
   if(color === "double"){
-
     return `
       <div class="doubleDot">
         <span class="dot green"></span>
         <span class="dot violet"></span>
       </div>
     `;
-
   }
 
   return `<span class="dot ${color}"></span>`;
 }
 
-/* PWA SERVICE WORKER */
 if("serviceWorker" in navigator){
-
   window.addEventListener("load", ()=>{
-
     navigator.serviceWorker
     .register("./service-worker.js")
     .then(()=>{
@@ -316,9 +308,7 @@ if("serviceWorker" in navigator){
     .catch(err=>{
       console.log("Service Worker Error", err);
     });
-
   });
-
 }
 </script>
 
