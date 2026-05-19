@@ -6,7 +6,6 @@
 
 <title>Number Search</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="icon-192.png">
@@ -103,6 +102,16 @@ button{
   justify-content:center;
 }
 
+.strategyBox{
+  background:#f7f7f7;
+  border:1px solid #ddd;
+  padding:12px;
+  font-size:18px;
+  font-weight:bold;
+  text-align:left;
+  line-height:1.7;
+}
+
 .notfound{
   margin-top:20px;
   font-size:20px;
@@ -139,7 +148,6 @@ button{
 <script>
 let data = [];
 
-/* JSON FILE LOAD */
 document.getElementById("fileInput").addEventListener("change", function(){
 
   const file = this.files[0];
@@ -232,11 +240,19 @@ function findData(){
       const pichheWala = data[i + len];
 
       output.innerHTML = `
+        <div class="title">Search Pattern</div>
+        <div class="row">
+          <div class="col num">${input}</div>
+        </div>
+
         <div class="title">आगे वाला</div>
         ${showItemRow(aageWala)}
 
         <div class="title">पीछे वाला</div>
         ${showItemRow(pichheWala)}
+
+        <div class="title">Strategy View</div>
+        ${showStrategy(aageWala, pichheWala)}
       `;
 
       return;
@@ -301,6 +317,50 @@ function showColor(color){
   }
 
   return `<span class="dot ${color}"></span>`;
+}
+
+function showStrategy(aageWala, pichheWala){
+
+  if(!aageWala && !pichheWala){
+    return `
+      <div class="strategyBox">
+        Strategy नहीं बन पा रही
+      </div>
+    `;
+  }
+
+  let target = aageWala || pichheWala;
+  let color = target.color;
+
+  let colorText = color.toUpperCase();
+
+  if(color === "violet"){
+    colorText = "GREEN + VIOLET";
+  }
+
+  return `
+    <div class="row">
+
+      <div class="col num ${color}">
+        ${target.num}
+      </div>
+
+      <div class="col type">
+        ${target.type}
+      </div>
+
+      <div class="col ${color}">
+        ${colorText}
+      </div>
+
+    </div>
+
+    <div class="strategyBox">
+      Strategy Number: ${target.num}<br>
+      Strategy Text: ${target.type}<br>
+      Strategy Colour: ${colorText}
+    </div>
+  `;
 }
 
 /* PWA SERVICE WORKER */
