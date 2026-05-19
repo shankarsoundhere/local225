@@ -1,6 +1,6 @@
 {
-  "name": "Colue",
-  "short_name": "Colur",
+  "name": "Panel",
+  "short_name": "Panel",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
