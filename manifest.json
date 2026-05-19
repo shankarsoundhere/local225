@@ -1,7 +1,7 @@
 {
   "name": "Panel",
   "short_name": "Panel",
-  "start_url": "./index.html",
+  "start_url": "/local225/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
