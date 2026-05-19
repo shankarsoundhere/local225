@@ -1,4 +1,4 @@
-const CACHE_NAME = "admin-panel-v1";
+const CACHE_NAME = "admin-panel-v2";
 
 const FILES_TO_CACHE = [
   "./",
@@ -9,12 +9,13 @@ const FILES_TO_CACHE = [
 ];
 
 self.addEventListener("install", event => {
+  self.skipWaiting();
+
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(FILES_TO_CACHE);
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
@@ -22,20 +23,23 @@ self.addEventListener("activate", event => {
     caches.keys().then(keys => {
       return Promise.all(
         keys.map(key => {
-          if(key !== CACHE_NAME){
+          if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
+    fetch(event.request)
+      .then(response => {
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
